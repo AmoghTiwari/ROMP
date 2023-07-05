@@ -26,6 +26,7 @@ class TRACE(nn.Module):
         load_config_dict(self, vars(args)) # loading settings to self.
         self.default_seq_cfgs = get_seq_cfgs(args)
         self.device = torch.device(f'cuda:{self.GPU}') if self.GPU>-1 else torch.device('cpu')
+        self.smpl_model_path = args.smpl_path
         print('putting data onto:', self.device)
         self.__load_models__()  
       
@@ -126,7 +127,8 @@ class TRACE(nn.Module):
 
     def save_results(self, outputs, tracking_results, kp3d_results, imgpaths):
         for seq_name in outputs:
-            save_paths = preds_save_paths(self.results_save_dir, prefix=seq_name)
+            # save_paths = preds_save_paths(self.results_save_dir, prefix=seq_name)
+            save_paths = preds_save_paths(self.save_path, prefix=seq_name)
             np.savez(save_paths.seq_results_save_path, outputs=remove_large_keys(outputs[seq_name]), imgpaths=imgpaths[seq_name])
             np.savez(save_paths.seq_tracking_results_save_path, tracking=tracking_results[seq_name], kp3ds=kp3d_results[seq_name])
             if self.save_video:
