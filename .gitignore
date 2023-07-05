@@ -1,6 +1,9 @@
-#src/
+# Amogh's Additions
+data/*
+results/*
+
+# Initial file
 trained_models/
-#models/
 demo/videos/
 demo/animation/
 model_data/
