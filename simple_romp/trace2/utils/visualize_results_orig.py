@@ -183,25 +183,17 @@ def process_idx(reorganize_idx, vids=None):
 
 def visulize_result(renderer, outputs, imgpath, rendering_cfgs, save_dir, smpl_model_path):
     used_org_inds, per_img_inds = process_idx(outputs['reorganize_idx'])
-    save_dir_bv = os.path.join(save_dir, "bv")
-    os.makedirs(save_dir_bv, exist_ok=True)
     render_images_path = []
-    render_images_bv_path = []
     for org_ind, img_inds in zip(used_org_inds, per_img_inds):
         image_path = imgpath[org_ind]
-        image_path_bv = imgpath[org_ind]
         image = cv2.imread(image_path)
         if image.shape[1]>1024:
             cv2.resize(image, (image.shape[1]//2,image.shape[0]//2))
-        render_image, render_image_bv = render_image_results(renderer, outputs, img_inds, image, rendering_cfgs, smpl_model_path)
+        render_image = render_image_results(renderer, outputs, img_inds, image, rendering_cfgs, smpl_model_path)
         save_path = os.path.join(save_dir, os.path.basename(image_path))
         cv2.imwrite(save_path, render_image)
         render_images_path.append(save_path)
-        
-        save_path_bv = os.path.join(save_dir_bv, os.path.basename(image_path_bv))
-        cv2.imwrite(save_path_bv, render_image_bv)
-        render_images_bv_path.append(save_path_bv)
-    return render_images_path, render_images_bv_path
+    return render_images_path
 
 def save_video(frame_save_paths, save_path, frame_rate=24):
     if len(frame_save_paths)== 0:
@@ -218,7 +210,6 @@ def render_image_results(renderer, outputs, img_inds, image, rendering_cfgs, smp
     background = np.ones([h, h, 3], dtype=np.uint8) * 255
     # result_image = [image]
     result_image = []
-    result_image_bv = []
 
     cam_trans = outputs['cam_trans'][img_inds]
     if rendering_cfgs['mesh_color'] == 'identity':
@@ -251,8 +242,8 @@ def render_image_results(renderer, outputs, img_inds, image, rendering_cfgs, smp
 
         if 'mesh_bird_view' in rendering_cfgs['items']:
             verts_bird_view, bbox3D_center, scale = rotate_view_weak_perspective(verts_tran, rx=-90, ry=0, img_shape=background.shape[:2], expand_ratio=1.2)
-            rendered_image_bv = renderer(verts_bird_view.cpu().numpy(), triangles, background, mesh_colors=mesh_colors)
-            result_image_bv.append(rendered_image_bv)
+            rendered_bv_image = renderer(verts_bird_view.cpu().numpy(), triangles, background, mesh_colors=mesh_colors)
+            result_image.append(rendered_bv_image)
         
         if 'mesh_side_view' in rendering_cfgs['items']:
             verts_side_view, bbox3D_center, scale = rotate_view_weak_perspective(verts_tran, rx=0, ry=-90, img_shape=image.shape[:2], expand_ratio=1.2)
@@ -276,7 +267,7 @@ def render_image_results(renderer, outputs, img_inds, image, rendering_cfgs, smp
         if 'mesh_bird_view' in rendering_cfgs['items']:
             verts_bird_view, bbox3D_center, move_depth = rotate_view_perspective(verts_tran, rx=90, ry=0)
             rendered_bv_image, rend_depth = renderer(verts_bird_view.cpu().numpy(), triangles, background, persp=False, mesh_colors=mesh_colors)
-            result_image_bv.append(cv2.resize(rendered_image_bv, (h, h)))
+            result_image.append(cv2.resize(rendered_bv_image, (h, h)))
 
         if 'mesh_side_view' in rendering_cfgs['items']:
             verts_side_view, bbox3D_center, move_depth = rotate_view_perspective(verts_tran, rx=0, ry=90)
@@ -314,21 +305,17 @@ def render_image_results(renderer, outputs, img_inds, image, rendering_cfgs, smp
     if 'tracking' in rendering_cfgs['items'] and 'track_ids' in outputs:
         for ind, kp in enumerate(outputs['pj2d_org'][img_inds].cpu().numpy()[:,0]):
             cv2.putText(result_image[0], '{:d}'.format(outputs['track_ids'][img_inds][ind]), tuple(kp.astype(int)), cv2.FONT_HERSHEY_COMPLEX,2,(255,0,255),2)  
-
-    if 'mesh_bird_view' in rendering_cfgs['items']:
-        return np.concatenate(result_image, 0), np.concatenate(result_image_bv, 0)
-
+    
     return np.concatenate(result_image, 0)
 
 def visualize_predictions(outputs, imgpath, FOV, seq_save_dir, smpl_model_path):
-    rendering_cfgs = {'mesh_color':'identity', 'items':'mesh, mesh_bird_view, tracking', 'renderer': 'sim3dr'} # 'world_mesh' 
+    rendering_cfgs = {'mesh_color':'identity', 'items':'mesh, tracking', 'renderer': 'sim3dr'} # 'world_mesh' 
     #rendering_cfgs = {'mesh_color':'identity', 'items':'mesh,tracking', 'renderer': 'pyrender'} # 'world_mesh'
     renderer = setup_renderer(name=rendering_cfgs['renderer'], FOV=FOV)
     os.makedirs(seq_save_dir, exist_ok=True)
-    render_images_path, render_images_bv_path = visulize_result(renderer, outputs, imgpath, rendering_cfgs, seq_save_dir, smpl_model_path)
-    save_video(render_images_path, seq_save_dir+'.mp4', frame_rate=30)
-    if 'mesh_bird_view' in rendering_cfgs['items']:
-        save_video(render_images_bv_path, seq_save_dir+'_bv.mp4', frame_rate=30)
+    render_images_path = visulize_result(renderer, outputs, imgpath, rendering_cfgs, seq_save_dir, smpl_model_path)
+    save_video(render_images_path, seq_save_dir+'.mp4', frame_rate=25)
+
 
 class Plotter3dPoses:
     def __init__(self, canvas_size=(512,512), origin=(0.5, 0.5), scale=200):
