@@ -2,6 +2,7 @@
 data/*
 data*
 results/*
+results*
 
 # Initial file
 trained_models/
