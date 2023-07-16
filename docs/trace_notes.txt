@@ -1,0 +1,20 @@
+reorganize_idx (Can be obtained -> [i for i in range(len(seq_len))])
+cam_trans -> (seq_len, 3)
+track_ids (Can be obtained; -> [1 for i in range(len(seq_len))])
+verts (seq_len, 6890, 3)
+verts_camed_org (seq_len, 6890, 3)
+world_verts_camed_org (optional)
+world_trans (optional)
+pj2d (optional)
+j3d (optional)
+pj2d_org (optional)
+center_confs (optional)
+
+main
+	temp_head_forward
+		self._result_parser.parsing_forward (defined in trace2.results_parser.temp_result_parser.py)
+			params_map_parser -> SMPLWrapper (defined in trace2.results_parser.smpl_wrapper)
+				vertices_kp3d_projection (defined in trace2.utils.utils)
+					outputs['verts_camed'] -> perspective_projection (needs cam trans {denormalized cam trans} and focal length {Set to 548})
+					outputs['verts_camed'] -> convert_kp2ds2org_images
+
