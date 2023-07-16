@@ -1,0 +1,129 @@
+conda create -n romp_env python=3.8 -y
+conda activate romp_env
+pip install --upgrade setuptools numpy cython lap
+pip install torch torchvision torchaudio
+
+Check if pytorch got installed properly
+
+cd simple_romp
+python setup_trace.py install
+conda install -c anaconda joblib -y
+pip install pyrender
+pip install matplotlib
+pip install imgaug
+
+export CUDA_VISIBLE_DEVICES=0; 
+python -m trace2.main -i /home/cvit/amogh/projects/ROMP/data/demo_seqs/trace_demo -o ../results/trace_demo --subject_num=1
+
+/data/groot/miniconda3/envs/romp_env2/lib/python3.8/site-packages/simple_romp-2.0.2-py3.8-linux-x86_64.egg/trace2
+
+
+self.smpl_model_path = args.smpl_path (Added to line 28)
+# save_paths = preds_save_paths(self.results_save_dir, prefix=seq_name) (line 130)
+save_paths = preds_save_paths(self.save_path, prefix=seq_name)
+
+trace2/utils/infer_settings.py (Comment out line 56)
+
+  export PIP_DEFAULT_TIMEOUT=100
+  pip install open3d
+  pip install smplx
+  pip install chumpy
+  pip uninstall numpy; pip install numpy==1.23.1
+
+
+---------------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------
+
+alt_cuda_corr is not compiled
+putting data onto: cuda:0
+using fine_tune model: /home/groot/.romp/TRACE_models/trace_image_backbone.pkl
+missing parameters of layers:[]
+self.conf_thresh 0.05
+using fine_tune model: /home/groot/.romp/TRACE_models/trace_head.pkl
+copy param _result_parser.params_map_parser.smpl_model.vertex_joint_selector.extra_joints_idxs failed, mismatched
+missing parameters of layers:[]
+sid_video_name: {0: 'trace_demo'}
+Loading 11 image sequences to process
+Processing ['/data/amogh/workspace/projects/ROMP/data/demo_seqs/trace_demo']
+/data/groot/miniconda3/envs/romp_env/lib/python3.8/site-packages/torch/functional.py:504: UserWarning: torch.meshgrid: in an upcoming release, it will be required to pass the indexing argument. (Triggered internally at ../aten/src/ATen/native/TensorShape.cpp:3483.)
+  return _VF.meshgrid(tensors, **kwargs)  # type: ignore[attr-defined]
+FPS: 4.580678973259744
+Traceback (most recent call last):
+  File "/data/groot/miniconda3/envs/romp_env/bin/trace2", line 33, in <module>
+    sys.exit(load_entry_point('simple-romp==2.0.2', 'console_scripts', 'trace2')())
+  File "/data/groot/miniconda3/envs/romp_env/lib/python3.8/site-packages/simple_romp-2.0.2-py3.8-linux-x86_64.egg/trace2/main.py", line 141, in main
+    trace.save_results(outputs, tracking_results, kp3d_results, imgpaths)
+  File "/data/groot/miniconda3/envs/romp_env/lib/python3.8/site-packages/simple_romp-2.0.2-py3.8-linux-x86_64.egg/trace2/main.py", line 129, in save_results
+    save_paths = preds_save_paths(self.results_save_dir, prefix=seq_name)
+  File "/data/groot/miniconda3/envs/romp_env/lib/python3.8/site-packages/simple_romp-2.0.2-py3.8-linux-x86_64.egg/trace2/utils/utils.py", line 13, in __init__
+    os.makedirs(self.seq_save_dir, exist_ok=True)
+  File "/data/groot/miniconda3/envs/romp_env/lib/python3.8/os.py", line 213, in makedirs
+    makedirs(head, exist_ok=exist_ok)
+  File "/data/groot/miniconda3/envs/romp_env/lib/python3.8/os.py", line 213, in makedirs
+    makedirs(head, exist_ok=exist_ok)
+  File "/data/groot/miniconda3/envs/romp_env/lib/python3.8/os.py", line 223, in makedirs
+    mkdir(name, mode)
+PermissionError: [Errno 13] Permission denied: '/home/yusun'
+
+
+---------------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------
+
+Traceback (most recent call last):
+  File "/data/groot/miniconda3/envs/romp_env2/lib/python3.8/runpy.py", line 194, in _run_module_as_main
+    return _run_code(code, main_globals, None,
+  File "/data/groot/miniconda3/envs/romp_env2/lib/python3.8/runpy.py", line 87, in _run_code
+    exec(code, run_globals)
+  File "/data/amogh/workspace/projects/ROMP/simple_romp/trace2/show.py", line 66, in <module>
+    visualize_subject_world_results('prediction', results, args.frame_dir, args.smpl_model_folder, img_ext=args.img_ext)
+AttributeError: 'Namespace' object has no attribute 'img_ext'
+
+
+---------------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------
+Annotation keys include:  ['reorganize_idx', 'j3d', 'world_cams', 'world_trans', 'world_global_rots', 'pj2d_org', 'pj2d', 'cam_trans', 'pj2d_org_h36m17', 'joints_h36m17', 'center_confs', 'track_ids', 'smpl_thetas', 'smpl_betas']
+/data/groot/miniconda3/envs/romp_env/lib/python3.8/site-packages/chumpy/__init__.py:11: FutureWarning: In the future `np.bool` will be defined as the corresponding NumPy scalar.
+  from numpy import bool, int, float, complex, object, unicode, str, nan, inf
+/data/groot/miniconda3/envs/romp_env/lib/python3.8/site-packages/chumpy/__init__.py:11: FutureWarning: In the future `np.object` will be defined as the corresponding NumPy scalar.
+  from numpy import bool, int, float, complex, object, unicode, str, nan, inf
+/data/groot/miniconda3/envs/romp_env/lib/python3.8/site-packages/chumpy/__init__.py:11: FutureWarning: In the future `np.str` will be defined as the corresponding NumPy scalar.
+  from numpy import bool, int, float, complex, object, unicode, str, nan, inf
+Traceback (most recent call last):
+  File "/data/groot/miniconda3/envs/romp_env/lib/python3.8/runpy.py", line 194, in _run_module_as_main
+    return _run_code(code, main_globals, None,
+  File "/data/groot/miniconda3/envs/romp_env/lib/python3.8/runpy.py", line 87, in _run_code
+    exec(code, run_globals)
+  File "/data/amogh/workspace/projects/ROMP/simple_romp/trace2/show.py", line 67, in <module>
+    visualize_subject_world_results('prediction', results, args.frame_dir, args.smpl_model_folder)
+  File "/data/amogh/workspace/projects/ROMP/simple_romp/trace2/show.py", line 33, in visualize_subject_world_results
+    smpl_model = SMPL(smpl_model_folder, gender='neutral').eval()
+  File "/data/groot/miniconda3/envs/romp_env/lib/python3.8/site-packages/smplx/body_models.py", line 137, in __init__
+    data_struct = Struct(**pickle.load(smpl_file,
+  File "/data/groot/miniconda3/envs/romp_env/lib/python3.8/site-packages/chumpy/__init__.py", line 11, in <module>
+    from numpy import bool, int, float, complex, object, unicode, str, nan, inf
+ImportError: cannot import name 'bool' from 'numpy' (/data/groot/miniconda3/envs/romp_env/lib/python3.8/site-packages/numpy/__init__.py)
+
+---------------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------
+
+
+ModuleNotFoundError: No module named 'deform_conv_cuda'
+
+alt_cuda_corr is not compiled
+Traceback (most recent call last):
+  File "/data/groot/miniconda3/envs/romp_env/bin/trace2", line 5, in <module>
+    from trace2.main import main
+  File "/data/groot/miniconda3/envs/romp_env/lib/python3.8/site-packages/trace2/main.py", line 13, in <module>
+    from .models.model import TRACE_head
+  File "/data/groot/miniconda3/envs/romp_env/lib/python3.8/site-packages/trace2/models/model.py", line 11, in <module>
+    from .deform_conv import DeformConv
+  File "/data/groot/miniconda3/envs/romp_env/lib/python3.8/site-packages/trace2/models/deform_conv/__init__.py", line 1, in <module>
+    from .functions.deform_conv import deform_conv, modulated_deform_conv
+  File "/data/groot/miniconda3/envs/romp_env/lib/python3.8/site-packages/trace2/models/deform_conv/functions/deform_conv.py", line 5, in <module>
+    import deform_conv_cuda
+
+
+
+Reference: https://pypi.org/project/mmcv/
+
+
