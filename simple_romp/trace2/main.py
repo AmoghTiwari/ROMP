@@ -57,7 +57,7 @@ class TRACE(nn.Module):
             outputs, meta_data = self._result_parser.parsing_forward(outputs, meta_data, cfg)
         #BaseTrack._count = 0 # to refresh the ID back to start from 1
         return outputs
-        
+    
     @torch.no_grad()
     def sequence_inference(self, meta_data, seq_name, cfg_dict):
         input_images = meta_data['image']
@@ -129,7 +129,8 @@ class TRACE(nn.Module):
         for seq_name in outputs:
             # save_paths = preds_save_paths(self.results_save_dir, prefix=seq_name)
             save_paths = preds_save_paths(self.save_path, prefix=seq_name)
-            np.savez(save_paths.seq_results_save_path, outputs=remove_large_keys(outputs[seq_name]), imgpaths=imgpaths[seq_name])
+            # np.savez(save_paths.seq_results_save_path, outputs=remove_large_keys(outputs[seq_name]), imgpaths=imgpaths[seq_name])
+            np.savez(save_paths.seq_results_save_path, outputs=outputs[seq_name], imgpaths=imgpaths[seq_name])
             np.savez(save_paths.seq_tracking_results_save_path, tracking=tracking_results[seq_name], kp3ds=kp3d_results[seq_name])
             if self.save_video:
                 visualize_predictions(outputs[seq_name], imgpaths[seq_name], self.FOV, save_paths.seq_save_dir, self.smpl_model_path)
@@ -144,4 +145,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-    
